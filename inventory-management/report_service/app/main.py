@@ -26,38 +26,47 @@ app.add_middleware(
 # api lấy tất cả dữ liệu báo cáo
 @app.get("/api/report")
 def get_report():
-    result = get_all_report()
-    data = []
-    if result != "error":
-        for row in result:
-            data.append({
-                "id": row.id, 
-                "file": row.file, 
-                "date": row.date,
-            })
-        return {
-            "message": "success",
-            "report": data,
-        }
-    return {"message": "error"}
+    try:
+        result = get_all_report()
+        data = []
+        if result != "error":
+            for row in result:
+                data.append({
+                    "id": row.id, 
+                    "file": row.file, 
+                    "date": row.date,
+                })
+            return {
+                "message": "success",
+                "report": data,
+            }
+        return {"message": "error"}
+    except:
+        return {"message": "error"}
 
 # api thêm mới một dữ liệu báo cáo
 @app.post("/api/report")
 def create_new_report(item: Report):
-    result = create_report(item)
-    result = "success"
-    if result == "success":
-        return {"message": "success"}
-    else:
+    try:
+        result = create_report(item)
+        result = "success"
+        if result == "success":
+            return {"message": "success"}
+        else:
+            return {"message": "error"}
+    except:
         return {"message": "error"}
 
 # api xóa dữ liệu báo cáo
 @app.delete("/api/delete/{id}")
 def delete_report_by_id(id: int):
-    result = delete_report(id)
-    if result == "success":
-        return {"message": "success"}
-    else:
+    try:
+        result = delete_report(id)
+        if result == "success":
+            return {"message": "success"}
+        else:
+            return {"message": "error"}
+    except:
         return {"message": "error"}
 
 # running

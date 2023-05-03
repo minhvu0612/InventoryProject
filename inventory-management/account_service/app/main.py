@@ -26,45 +26,70 @@ app.add_middleware(
 # Lấy thông tin user qua username và password
 @app.get("/api/account/{username}/{password}")
 def get_user_by_info(username: str, password: str):
-    result = get_user(username, password)
-    if result != "error":
-        for row in result:
-            print(row)
-            return {
-                "message": "success",
-                "name": row.name,
-                "username": row.username,
-                "password": row.password,
-                "avatar": row.avatar,
-                "group_id": row.group_id
-            }
-    return {"message": "error"}
+    try:
+        result = get_user(username, password)
+        if result != "error":
+            for row in result:
+                print(row)
+                return {
+                    "message": "success",
+                    "name": row.name,
+                    "username": row.username,
+                    "password": row.password,
+                    "avatar": row.avatar,
+                    "group_id": row.group_id,
+                    "id": row.id
+                }
+        return {"message": "error"}
+    except:
+        return {"message": "error"}
 
 # Tạo user mới
 @app.post("/api/account")
 def create_new_user(item: User):
-    result = create_user(item)
-    if result == "success":
-        return {"message": "success"}
-    else:
+    try:
+        result = create_user(item)
+        if result == "success":
+            result_after = get_user(item.username, item.password)
+            if result_after != "error":
+                for row in result_after:
+                    print(row)
+                    return {
+                        "message": "success",
+                        "name": row.name,
+                        "username": row.username,
+                        "password": row.password,
+                        "avatar": row.avatar,
+                        "group_id": row.group_id,
+                        "id": row.id
+                    }
+        else:
+            return {"message": "error"}
+    except:
         return {"message": "error"}
 
 # Cập nhật user
 @app.put("/api/account/{id}")
 def update_user_by_id(item: User, id: int):
-    result = update_user(item, id)
-    if result == "success":
-        return {"message": "success"}
-    else:
+    try:
+        result = update_user(item, id)
+        if result == "success":
+            return {"message": "success"}
+        else:
+            return {"message": "error"}
+    except:
         return {"message": "error"}
 
 # Xóa user
 @app.delete("/api/account/{id}")
 def delete_user_by_id(id: int):
-    result = delete_user(id)
-    if result == "success":
-        return {"message": "success"}
-    else:
+    try:
+        result = delete_user(id)
+        if result == "success":
+            return {"message": "success"}
+        else:
+            return {"message": "error"}
+    except:
         return {"message": "error"}
 
 # running
